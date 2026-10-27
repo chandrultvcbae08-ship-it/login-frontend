@@ -304,12 +304,26 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Link
+                to="/register/doctor"
+                className="btn btn-outline btn-sm"
+                style={{
+                  borderColor: 'var(--primary)',
+                  color: 'var(--primary)',
+                  backgroundColor: 'var(--primary-light)',
+                  gap: '6px',
+                  fontWeight: 700
+                }}
+              >
+                <Stethoscope size={15} />
+                <span>Join as Doctor</span>
+              </Link>
               <Link to="/login" className="btn btn-outline btn-sm">
                 Log In
               </Link>
               <Link to="/register/patient" className="btn btn-primary btn-sm">
-                Register
+                Patient Sign Up
               </Link>
             </div>
           )}
@@ -358,6 +372,35 @@ const Navbar = () => {
           )}
           {user && (
             <Link to="/prescriptions" onClick={() => setMobileMenuOpen(false)} style={{ padding: '8px 0', fontWeight: 600 }}>Prescriptions</Link>
+          )}
+
+          {!user && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-color)' }}>
+              <Link
+                to="/register/doctor"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-outline btn-sm"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: 'var(--primary)', borderColor: 'var(--primary)', backgroundColor: 'var(--primary-light)' }}
+              >
+                <Stethoscope size={16} /> Join as Doctor
+              </Link>
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-outline btn-sm"
+                style={{ textAlign: 'center' }}
+              >
+                Log In
+              </Link>
+              <Link
+                to="/register/patient"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-primary btn-sm"
+                style={{ textAlign: 'center' }}
+              >
+                Patient Sign Up
+              </Link>
+            </div>
           )}
         </div>
       )}

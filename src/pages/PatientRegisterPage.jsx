@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Phone, Calendar, Heart, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, Phone, Calendar, Heart, AlertCircle, CheckCircle2, Eye, EyeOff, Stethoscope, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const PatientRegisterPage = () => {
@@ -41,10 +41,27 @@ const PatientRegisterPage = () => {
       await registerPatient(formData);
       navigate('/patient/appointments');
     } catch (err) {
-      const errorMsg =
-        err.response?.data?.email?.[0] ||
-        err.response?.data?.detail ||
-        'Registration failed. Please check your details and try again.';
+      let errorMsg = 'Registration failed. Please check your details and try again.';
+      if (err.response?.data) {
+        const data = err.response.data;
+        if (typeof data === 'string') {
+          errorMsg = data;
+        } else if (data.detail) {
+          errorMsg = data.detail;
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else {
+          const messages = [];
+          for (const [key, val] of Object.entries(data)) {
+            const field = key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+            const text = Array.isArray(val) ? val.join(' ') : String(val);
+            messages.push(`${field}: ${text}`);
+          }
+          if (messages.length > 0) {
+            errorMsg = messages.join(' | ');
+          }
+        }
+      }
       setError(errorMsg);
     } finally {
       setLoading(false);
@@ -52,8 +69,73 @@ const PatientRegisterPage = () => {
   };
 
   return (
-    <div className="page-container" style={{ maxWidth: '680px', padding: '40px 20px' }}>
-      <div className="card" style={{ padding: '36px 32px' }}>
+    <div className="page-container" style={{ maxWidth: '720px', padding: '36px 20px 60px' }}>
+      {/* Role Switcher Tabs */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '8px',
+          backgroundColor: '#e2e8f0',
+          padding: '6px',
+          borderRadius: 'var(--radius-lg)',
+          marginBottom: '28px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            borderRadius: 'var(--radius-md)',
+            fontWeight: 700,
+            fontSize: '0.95rem',
+            color: 'var(--primary)',
+            backgroundColor: '#ffffff',
+            boxShadow: 'var(--shadow-sm)',
+          }}
+        >
+          <User size={18} />
+          <span>Patient Registration</span>
+        </div>
+        <Link
+          to="/register/doctor"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            borderRadius: 'var(--radius-md)',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            color: 'var(--text-muted)',
+            backgroundColor: 'transparent',
+            textDecoration: 'none',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <Stethoscope size={18} />
+          <span>Doctor Registration</span>
+          <span
+            style={{
+              fontSize: '0.68rem',
+              backgroundColor: 'var(--primary-light)',
+              color: 'var(--primary)',
+              padding: '2px 8px',
+              borderRadius: 'var(--radius-full)',
+              border: '1px solid var(--primary-border)',
+              fontWeight: 700,
+            }}
+          >
+            Practitioners
+          </span>
+        </Link>
+      </div>
+
+      <div className="card" style={{ padding: '36px 32px', boxShadow: 'var(--shadow-lg)' }}>
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{
             width: '48px',
@@ -69,12 +151,34 @@ const PatientRegisterPage = () => {
           }}>
             <User size={26} />
           </div>
-          <h2 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: '6px' }}>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, marginBottom: '6px' }}>
             Patient Registration
-          </h2>
+          </h1>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            Create your MediConnect patient account to book and manage medical visits
+            Create your MediConnect patient account to book appointments and track prescriptions
           </p>
+
+          {/* Quick link banner to Doctor Registration */}
+          <div
+            style={{
+              marginTop: '16px',
+              backgroundColor: '#f0fdfa',
+              border: '1px solid #99f6e4',
+              borderRadius: 'var(--radius-md)',
+              padding: '10px 14px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.825rem',
+              color: '#0f766e',
+            }}
+          >
+            <Stethoscope size={16} />
+            <span>Are you a medical doctor or clinic?</span>
+            <Link to="/register/doctor" style={{ fontWeight: 700, color: 'var(--primary)', textDecoration: 'underline' }}>
+              Register as Doctor here
+            </Link>
+          </div>
         </div>
 
         {error && (
@@ -270,8 +374,16 @@ const PatientRegisterPage = () => {
             Complete Registration
           </button>
 
-          <div style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            Already have an account? <Link to="/login" style={{ fontWeight: 700 }}>Log In here</Link>
+          <div style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div>
+              Already have an account? <Link to="/login" style={{ fontWeight: 700 }}>Log In here</Link>
+            </div>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+              Are you a medical doctor?{' '}
+              <Link to="/register/doctor" style={{ fontWeight: 700, color: 'var(--primary)' }}>
+                Register as Doctor & Practitioner
+              </Link>
+            </div>
           </div>
         </form>
       </div>

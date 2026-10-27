@@ -234,12 +234,34 @@ const LoginPage = () => {
         </div>
 
         {/* Register Links */}
-        <div style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-          Don't have an account?{' '}
-          <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'center', gap: '16px' }}>
-            <Link to="/register/patient" style={{ fontWeight: 700 }}>Register as Patient</Link>
-            <span>•</span>
-            <Link to="/register/doctor" style={{ fontWeight: 700 }}>Register as Doctor</Link>
+        <div style={{ marginTop: '10px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
+            Don't have an account yet?
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <Link
+              to="/register/patient"
+              className="btn btn-outline btn-sm"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              <User size={15} /> Patient Sign Up
+            </Link>
+            <Link
+              to="/register/doctor"
+              className="btn btn-outline btn-sm"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                color: 'var(--primary)',
+                borderColor: 'var(--primary)',
+                backgroundColor: 'var(--primary-light)',
+                fontWeight: 700
+              }}
+            >
+              <Stethoscope size={15} /> Doctor Register
+            </Link>
           </div>
         </div>
       </div>
